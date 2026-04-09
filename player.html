@@ -9,6 +9,7 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
 
     html, body {
@@ -40,21 +41,21 @@
       top: 0;
       left: 0;
       width: 100%;
-      padding: 14px 16px;
+      padding: 18px 20px;
       display: flex;
       align-items: center;
-      gap: 12px;
-      z-index: 20;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.75), rgba(0,0,0,0));
-      transition: opacity 0.3s ease;
+      gap: 14px;
+      z-index: 30;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.78), rgba(0,0,0,0));
+      transition: opacity 0.35s ease;
     }
 
     .back {
       width: 42px;
       height: 42px;
       border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.25);
-      background: rgba(0,0,0,0.45);
+      border: 1px solid rgba(255,255,255,0.22);
+      background: rgba(0,0,0,0.42);
       color: #fff;
       font-size: 26px;
       display: flex;
@@ -62,6 +63,7 @@
       justify-content: center;
       cursor: pointer;
       user-select: none;
+      flex-shrink: 0;
     }
 
     .title {
@@ -72,22 +74,48 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 75vw;
+      max-width: 78vw;
+    }
+
+    .skip,
+    .next-ep {
+      position: absolute;
+      z-index: 30;
+      background: rgba(0,0,0,0.68);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: opacity 0.35s ease;
+      backdrop-filter: blur(2px);
     }
 
     .skip {
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .next-ep {
+      left: 50%;
+      bottom: 42px;
+      transform: translateX(-50%);
+      min-width: 220px;
+      text-align: center;
+    }
+
+    .shadow-top {
       position: absolute;
-      right: 16px;
-      bottom: 90px;
-      z-index: 20;
-      background: rgba(0,0,0,0.7);
-      color: #fff;
-      border: 1px solid rgba(255,255,255,0.25);
-      border-radius: 10px;
-      padding: 10px 14px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: opacity 0.3s ease;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 120px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.65), rgba(0,0,0,0));
+      z-index: 12;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
     }
 
     .shadow-bottom {
@@ -95,11 +123,68 @@
       left: 0;
       bottom: 0;
       width: 100%;
-      height: 120px;
-      background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0));
-      z-index: 10;
+      height: 150px;
+      background: linear-gradient(to top, rgba(0,0,0,0.72), rgba(0,0,0,0));
+      z-index: 12;
       pointer-events: none;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.35s ease;
+    }
+
+    .center-play {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 86px;
+      height: 86px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.82);
+      background: rgba(0,0,0,0.35);
+      color: #fff;
+      font-size: 42px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 35;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .next-auto {
+      position: absolute;
+      right: 18px;
+      bottom: 100px;
+      z-index: 35;
+      background: rgba(0,0,0,0.78);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 12px;
+      padding: 14px 18px;
+      min-width: 250px;
+      display: none;
+    }
+
+    .next-auto-title {
+      font-size: 13px;
+      opacity: 0.8;
+      margin-bottom: 6px;
+    }
+
+    .next-auto-name {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .next-auto-btn {
+      background: #fff;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 15px;
+      cursor: pointer;
+      width: 100%;
     }
 
     .hide-ui {
@@ -110,6 +195,8 @@
 </head>
 <body>
   <div class="wrap" id="wrap">
+    <div class="shadow-top" id="shadowTop"></div>
+
     <div class="topbar" id="topbar">
       <div class="back" onclick="voltar(event)">←</div>
       <div class="title" id="titulo">Dragon7</div>
@@ -117,47 +204,85 @@
 
     <video id="player" controls autoplay playsinline webkit-playsinline></video>
 
+    <div class="center-play" id="centerPlay" onclick="togglePlay(event)">▶</div>
+
     <button class="skip" id="skipBtn" onclick="pular(event)">Pular abertura</button>
+
+    <button class="next-ep" id="nextBtn" onclick="proximoEpisodio(event)">Próximo episódio ›</button>
+
+    <div class="next-auto" id="nextAutoBox">
+      <div class="next-auto-title">Próximo episódio em <span id="countdown">5</span>s</div>
+      <div class="next-auto-name" id="nextAutoName">Próximo episódio</div>
+      <button class="next-auto-btn" onclick="irProximoAgora(event)">Assistir agora</button>
+    </div>
 
     <div class="shadow-bottom" id="shadowBottom"></div>
   </div>
 
   <script>
     const params = new URLSearchParams(window.location.search);
+
     const videoUrl = params.get("video") || "";
     const titulo = params.get("titulo") || "Dragon7";
     const skip = parseInt(params.get("skip") || "85", 10);
+
+    const next = params.get("next") || "";
+    const nextTitulo = params.get("nextTitulo") || "Próximo episódio";
+    const autoNext = (params.get("autoNext") || "true") === "true";
 
     const player = document.getElementById("player");
     const tituloEl = document.getElementById("titulo");
     const topbar = document.getElementById("topbar");
     const skipBtn = document.getElementById("skipBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const shadowTop = document.getElementById("shadowTop");
     const shadowBottom = document.getElementById("shadowBottom");
+    const centerPlay = document.getElementById("centerPlay");
     const wrap = document.getElementById("wrap");
 
+    const nextAutoBox = document.getElementById("nextAutoBox");
+    const countdownEl = document.getElementById("countdown");
+    const nextAutoName = document.getElementById("nextAutoName");
+
     let hideTimer;
+    let nextTimer;
+    let nextCountdownInterval;
 
     tituloEl.textContent = titulo;
     player.src = videoUrl;
+    nextAutoName.textContent = nextTitulo;
+
+    if (!next) {
+      nextBtn.style.display = "none";
+    }
 
     function mostrarUI() {
       topbar.classList.remove("hide-ui");
       skipBtn.classList.remove("hide-ui");
+      nextBtn.classList.remove("hide-ui");
+      shadowTop.classList.remove("hide-ui");
       shadowBottom.classList.remove("hide-ui");
 
       clearTimeout(hideTimer);
 
       hideTimer = setTimeout(() => {
         if (!player.paused) {
-          topbar.classList.add("hide-ui");
-          skipBtn.classList.add("hide-ui");
-          shadowBottom.classList.add("hide-ui");
+          esconderUI();
         }
       }, 3000);
     }
 
+    function esconderUI() {
+      topbar.classList.add("hide-ui");
+      skipBtn.classList.add("hide-ui");
+      nextBtn.classList.add("hide-ui");
+      shadowTop.classList.add("hide-ui");
+      shadowBottom.classList.add("hide-ui");
+    }
+
     function voltar(e) {
       e.stopPropagation();
+      cancelarAutoNext();
       if (history.length > 1) {
         history.back();
       } else {
@@ -171,23 +296,92 @@
       mostrarUI();
     }
 
+    function proximoEpisodio(e) {
+      e.stopPropagation();
+      cancelarAutoNext();
+      if (next) {
+        window.location.href = next;
+      }
+    }
+
+    function irProximoAgora(e) {
+      e.stopPropagation();
+      cancelarAutoNext();
+      if (next) {
+        window.location.href = next;
+      }
+    }
+
+    function togglePlay(e) {
+      e.stopPropagation();
+      if (player.paused) {
+        player.play();
+      } else {
+        player.pause();
+      }
+    }
+
+    function cancelarAutoNext() {
+      clearTimeout(nextTimer);
+      clearInterval(nextCountdownInterval);
+      nextAutoBox.style.display = "none";
+    }
+
+    function iniciarAutoNext() {
+      if (!next || !autoNext) return;
+
+      cancelarAutoNext();
+
+      let segundos = 5;
+      countdownEl.textContent = segundos;
+      nextAutoBox.style.display = "block";
+
+      nextCountdownInterval = setInterval(() => {
+        segundos--;
+        countdownEl.textContent = segundos;
+        if (segundos <= 0) {
+          clearInterval(nextCountdownInterval);
+        }
+      }, 1000);
+
+      nextTimer = setTimeout(() => {
+        window.location.href = next;
+      }, 5000);
+    }
+
     wrap.addEventListener("click", function () {
       mostrarUI();
     });
 
     player.addEventListener("play", function () {
+      cancelarAutoNext();
+      centerPlay.style.display = "none";
       mostrarUI();
     });
 
     player.addEventListener("pause", function () {
+      clearTimeout(hideTimer);
+      centerPlay.style.display = "flex";
       topbar.classList.remove("hide-ui");
       skipBtn.classList.remove("hide-ui");
+      nextBtn.classList.remove("hide-ui");
+      shadowTop.classList.remove("hide-ui");
       shadowBottom.classList.remove("hide-ui");
-      clearTimeout(hideTimer);
     });
 
     player.addEventListener("loadeddata", function () {
       mostrarUI();
+    });
+
+    player.addEventListener("ended", function () {
+      clearTimeout(hideTimer);
+      centerPlay.style.display = "none";
+      topbar.classList.remove("hide-ui");
+      skipBtn.classList.remove("hide-ui");
+      nextBtn.classList.remove("hide-ui");
+      shadowTop.classList.remove("hide-ui");
+      shadowBottom.classList.remove("hide-ui");
+      iniciarAutoNext();
     });
   </script>
 </body>
