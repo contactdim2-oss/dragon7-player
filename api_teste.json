@@ -6,27 +6,27 @@
         {
           "titulo": "Episódio 1",
           "imagem": "",
-          "video": "https://download.samplelib.com/mp4/sample-5s.mp4"
+          "video": "https://www.w3schools.com/html/mov_bbb.mp4"
         },
         {
           "titulo": "Episódio 2",
           "imagem": "",
-          "video": "https://download.samplelib.com/mp4/sample-10s.mp4"
+          "video": "https://www.w3schools.com/html/mov_bbb.mp4"
         },
         {
           "titulo": "Episódio 3",
           "imagem": "",
-          "video": "https://filesamples.com/samples/video/mp4/sample_640x360.mp4"
+          "video": "https://www.w3schools.com/html/mov_bbb.mp4"
         },
         {
           "titulo": "Episódio 4",
           "imagem": "",
-          "video": "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4"
+          "video": "https://www.w3schools.com/html/mov_bbb.mp4"
         },
         {
           "titulo": "Episódio 5",
           "imagem": "",
-          "video": "https://samplelib.com/lib/preview/mp4/sample-15s.mp4"
+          "video": "https://www.w3schools.com/html/mov_bbb.mp4"
         }
       ]
     }
@@ -35,27 +35,27 @@
     {
       "titulo": "Live 1",
       "imagem": "",
-      "video": "https://download.samplelib.com/mp4/sample-5s.mp4"
+      "video": "https://www.w3schools.com/html/mov_bbb.mp4"
     },
     {
       "titulo": "Live 2",
       "imagem": "",
-      "video": "https://download.samplelib.com/mp4/sample-10s.mp4"
+      "video": "https://www.w3schools.com/html/mov_bbb.mp4"
     },
     {
       "titulo": "Live 3",
       "imagem": "",
-      "video": "https://filesamples.com/samples/video/mp4/sample_640x360.mp4"
+      "video": "https://www.w3schools.com/html/mov_bbb.mp4"
     },
     {
       "titulo": "Live 4",
       "imagem": "",
-      "video": "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4"
+      "video": "https://www.w3schools.com/html/mov_bbb.mp4"
     },
     {
       "titulo": "Live 5",
       "imagem": "",
-      "video": "https://samplelib.com/lib/preview/mp4/sample-15s.mp4"
+      "video": "https://www.w3schools.com/html/mov_bbb.mp4"
     }
   ]
 }
