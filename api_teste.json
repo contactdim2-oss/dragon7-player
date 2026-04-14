@@ -1,53 +1,51 @@
 {
-  "lives": [
-    {
-      "id": "live1",
-      "nome": "Live Teste 1",
-      "link": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
-      "tipo": "m3u8"
-    },
-    {
-      "id": "live2",
-      "nome": "Live Teste 2",
-      "link": "https://cph-p2p-msl.akamaized.net/hls/live/2000341/test/master.m3u8",
-      "tipo": "m3u8"
-    },
-    {
-      "id": "live3",
-      "nome": "Live Teste 3",
-      "link": "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
-      "tipo": "m3u8"
-    }
-  ],
   "animes": [
     {
-      "id": "anime-001",
-      "titulo": "Anime Teste",
-      "descricao": "Anime só para teste no Dragon7",
-      "capa": "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1200&auto=format&fit=crop",
+      "titulo": "Dragon Ball",
       "episodios": [
         {
-          "id": "ep-001",
-          "numero": "1",
           "titulo": "Episódio 1",
-          "video": "https://download.samplelib.com/mp4/sample-5s.mp4",
-          "tipo": "mp4"
+          "imagem": "",
+          "video": "https://download.samplelib.com/mp4/sample-5s.mp4"
         },
         {
-          "id": "ep-002",
-          "numero": "2",
           "titulo": "Episódio 2",
-          "video": "https://www.w3schools.com/html/mov_bbb.mp4",
-          "tipo": "mp4"
+          "imagem": "",
+          "video": "https://download.samplelib.com/mp4/sample-10s.mp4"
         },
         {
-          "id": "ep-003",
-          "numero": "3",
           "titulo": "Episódio 3",
-          "video": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-          "tipo": "mp4"
+          "imagem": "",
+          "video": "https://filesamples.com/samples/video/mp4/sample_640x360.mp4"
+        },
+        {
+          "titulo": "Episódio 4",
+          "imagem": "",
+          "video": "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4"
+        },
+        {
+          "titulo": "Episódio 5",
+          "imagem": "",
+          "video": "https://samplelib.com/lib/preview/mp4/sample-15s.mp4"
         }
       ]
+    }
+  ],
+  "livestream": [
+    {
+      "titulo": "Live 1",
+      "imagem": "",
+      "video": "https://download.samplelib.com/mp4/sample-5s.mp4"
+    },
+    {
+      "titulo": "Live 2",
+      "imagem": "",
+      "video": "https://download.samplelib.com/mp4/sample-10s.mp4"
+    },
+    {
+      "titulo": "Live 3",
+      "imagem": "",
+      "video": "https://filesamples.com/samples/video/mp4/sample_640x360.mp4"
     }
   ]
 }
