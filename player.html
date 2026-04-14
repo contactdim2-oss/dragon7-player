@@ -2,9 +2,14 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
   <title>Dragon7 Player</title>
   <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     html, body {
       margin: 0;
       padding: 0;
@@ -12,32 +17,216 @@
       height: 100%;
       background: #000;
       overflow: hidden;
+      font-family: Arial, sans-serif;
     }
 
     body {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      position: fixed;
+      inset: 0;
+      background: #000;
+    }
+
+    #app {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #000;
+      overflow: hidden;
     }
 
     video {
-      width: 100%;
-      height: 100%;
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
       background: #000;
       object-fit: contain;
+    }
+
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 18px 22px;
+      background: linear-gradient(to bottom, rgba(0,0,0,.82), rgba(0,0,0,.35), rgba(0,0,0,0));
+      transition: opacity .25s ease;
+    }
+
+    .topbar.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .back-btn {
+      width: 54px;
+      height: 54px;
+      border: none;
+      border-radius: 999px;
+      background: rgba(255,255,255,.14);
+      color: #fff;
+      font-size: 34px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .title-wrap {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .title {
+      color: #fff;
+      font-size: 22px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 70vw;
+    }
+
+    .subtitle {
+      color: rgba(255,255,255,.72);
+      font-size: 13px;
+      margin-top: 3px;
+    }
+
+    .center-play {
+      position: fixed;
+      inset: 0;
+      margin: auto;
+      width: 96px;
+      height: 96px;
+      border-radius: 999px;
+      border: none;
+      background: rgba(255,255,255,.22);
+      backdrop-filter: blur(4px);
+      color: #fff;
+      font-size: 38px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 25;
+      cursor: pointer;
+    }
+
+    .center-play.show {
+      display: flex;
     }
   </style>
 </head>
 <body>
-  <video id="player" controls autoplay playsinline webkit-playsinline>
-    <source id="source" src="" type="video/mp4">
-  </video>
+  <div id="app">
+    <video id="player" playsinline webkit-playsinline preload="metadata"></video>
+
+    <div id="topbar" class="topbar">
+      <button id="backBtn" class="back-btn">←</button>
+      <div class="title-wrap">
+        <div id="title" class="title">Carregando...</div>
+        <div class="subtitle">Dragon7 Player</div>
+      </div>
+    </div>
+
+    <button id="centerPlay" class="center-play">▶</button>
+  </div>
 
   <script>
     const params = new URLSearchParams(window.location.search);
     const videoUrl = params.get("video") || "";
-    document.getElementById("source").src = videoUrl;
-    document.getElementById("player").load();
+    const titleText = params.get("titulo") || "Dragon7";
+    const skip = parseInt(params.get("skip") || "0", 10);
+
+    const player = document.getElementById("player");
+    const title = document.getElementById("title");
+    const backBtn = document.getElementById("backBtn");
+    const topbar = document.getElementById("topbar");
+    const centerPlay = document.getElementById("centerPlay");
+
+    title.textContent = titleText;
+    player.src = videoUrl;
+    player.controls = true;
+    player.autoplay = true;
+
+    let uiTimer = null;
+
+    function showUI() {
+      topbar.classList.remove("hidden");
+      clearTimeout(uiTimer);
+      uiTimer = setTimeout(() => {
+        if (!player.paused) {
+          topbar.classList.add("hidden");
+        }
+      }, 2500);
+    }
+
+    function updateCenterButton() {
+      if (player.paused) {
+        centerPlay.classList.add("show");
+        centerPlay.textContent = "▶";
+      } else {
+        centerPlay.classList.remove("show");
+      }
+    }
+
+    backBtn.addEventListener("click", () => {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        location.href = "about:blank";
+      }
+    });
+
+    centerPlay.addEventListener("click", async () => {
+      try {
+        await player.play();
+      } catch (e) {}
+      showUI();
+      updateCenterButton();
+    });
+
+    player.addEventListener("loadedmetadata", () => {
+      if (!isNaN(skip) && skip > 0) {
+        player.currentTime = skip;
+      }
+    });
+
+    player.addEventListener("play", () => {
+      showUI();
+      updateCenterButton();
+    });
+
+    player.addEventListener("pause", () => {
+      topbar.classList.remove("hidden");
+      updateCenterButton();
+    });
+
+    player.addEventListener("click", () => {
+      if (topbar.classList.contains("hidden")) {
+        topbar.classList.remove("hidden");
+        showUI();
+      } else {
+        topbar.classList.add("hidden");
+      }
+    });
+
+    document.addEventListener("mousemove", showUI);
+    document.addEventListener("touchstart", showUI, { passive: true });
+
+    updateCenterButton();
+    showUI();
+
+    player.play().catch(() => {
+      updateCenterButton();
+    });
   </script>
 </body>
-</html>
+  </html>
