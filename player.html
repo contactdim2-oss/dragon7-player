@@ -1,221 +1,150 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
-  <title>Dragon7 Player</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dragon7 Player</title>
 
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      background: #000;
-      overflow: hidden;
-      font-family: Arial, sans-serif;
-    }
+<style>
+body {
+  margin: 0;
+  background: black;
+  overflow: hidden;
+  font-family: Arial;
+}
 
-    body {
-      position: fixed;
-      inset: 0;
-      background: #000;
-    }
+video {
+  width: 100vw;
+  height: 100vh;
+  object-fit: contain;
+  background: black;
+}
 
-    #app {
-      position: fixed;
-      inset: 0;
-      width: 100vw;
-      height: 100vh;
-      background: #000;
-      overflow: hidden;
-    }
+/* TOP BAR */
+.top {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  padding: 20px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-    video {
-      position: fixed;
-      inset: 0;
-      width: 100vw;
-      height: 100vh;
-      background: #000;
-      object-fit: contain;
-    }
+/* BOTTOM CONTROLS */
+.controls {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 20px;
+  color: white;
+}
 
-    .topbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 30;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 18px 22px;
-      background: linear-gradient(to bottom, rgba(0,0,0,.82), rgba(0,0,0,.35), rgba(0,0,0,0));
-      transition: opacity .25s ease;
-    }
+/* BOTÕES */
+.btn {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  padding: 10px 15px;
+  color: white;
+  border-radius: 10px;
+  margin: 5px;
+}
 
-    .topbar.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
+/* PROGRESS BAR */
+input[type=range] {
+  width: 100%;
+}
 
-    .back-btn {
-      width: 54px;
-      height: 54px;
-      border: none;
-      border-radius: 999px;
-      background: rgba(255,255,255,.14);
-      color: #fff;
-      font-size: 34px;
-      line-height: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-
-    .title-wrap {
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-    }
-
-    .title {
-      color: #fff;
-      font-size: 22px;
-      font-weight: 700;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 70vw;
-    }
-
-    .subtitle {
-      color: rgba(255,255,255,.72);
-      font-size: 13px;
-      margin-top: 3px;
-    }
-
-    .center-play {
-      position: fixed;
-      inset: 0;
-      margin: auto;
-      width: 96px;
-      height: 96px;
-      border-radius: 999px;
-      border: none;
-      background: rgba(255,255,255,.22);
-      backdrop-filter: blur(4px);
-      color: #fff;
-      font-size: 38px;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 25;
-      cursor: pointer;
-    }
-
-    .center-play.show {
-      display: flex;
-    }
-  </style>
+/* CENTER PLAY */
+.center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  font-size: 50px;
+  color: white;
+}
+</style>
 </head>
+
 <body>
-  <div id="app">
-    <video id="player" playsinline webkit-playsinline preload="metadata"></video>
 
-    <div id="topbar" class="topbar">
-      <button id="backBtn" class="back-btn">←</button>
-      <div class="title-wrap">
-        <div id="title" class="title">Carregando...</div>
-        <div class="subtitle">Dragon7 Player</div>
-      </div>
-    </div>
+<video id="video"></video>
 
-    <button id="centerPlay" class="center-play">▶</button>
+<!-- TOPO -->
+<div class="top">
+  <button class="btn" onclick="voltar()">←</button>
+  <span id="titulo">Carregando...</span>
+  <button class="btn" onclick="pular()">Pular</button>
+</div>
+
+<!-- CENTRO -->
+<div class="center" id="playBtn" onclick="playPause()">▶</div>
+
+<!-- CONTROLES -->
+<div class="controls">
+  <input type="range" id="barra" value="0">
+
+  <div>
+    <button class="btn" onclick="playPause()">Play/Pause</button>
+    <button class="btn" onclick="full()">Tela Cheia</button>
+    <button class="btn" onclick="proximo()">Próximo</button>
   </div>
+</div>
 
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const videoUrl = params.get("video") || "";
-    const titleText = params.get("titulo") || "Dragon7";
+<script>
+const video = document.getElementById("video");
+const barra = document.getElementById("barra");
+const playBtn = document.getElementById("playBtn");
+const titulo = document.getElementById("titulo");
 
-    const player = document.getElementById("player");
-    const title = document.getElementById("title");
-    const backBtn = document.getElementById("backBtn");
-    const topbar = document.getElementById("topbar");
-    const centerPlay = document.getElementById("centerPlay");
+// pegar link
+const params = new URLSearchParams(window.location.search);
+const link = params.get("video");
 
-    title.textContent = titleText;
-    player.src = videoUrl;
-    player.controls = true;
-    player.autoplay = true;
+video.src = link;
 
-    let uiTimer = null;
+// PLAY / PAUSE
+function playPause() {
+  if(video.paused){
+    video.play();
+    playBtn.style.display = "none";
+  } else {
+    video.pause();
+    playBtn.style.display = "block";
+  }
+}
 
-    function showUI() {
-      topbar.classList.remove("hidden");
-      clearTimeout(uiTimer);
-      uiTimer = setTimeout(() => {
-        if (!player.paused) {
-          topbar.classList.add("hidden");
-        }
-      }, 2500);
-    }
+// BARRA
+video.ontimeupdate = () => {
+  barra.value = (video.currentTime / video.duration) * 100;
+};
 
-    function updateCenterButton() {
-      if (player.paused) {
-        centerPlay.classList.add("show");
-        centerPlay.textContent = "▶";
-      } else {
-        centerPlay.classList.remove("show");
-      }
-    }
+barra.oninput = () => {
+  video.currentTime = (barra.value / 100) * video.duration;
+};
 
-    backBtn.addEventListener("click", () => {
-      history.back();
-    });
+// VOLTAR
+function voltar(){
+  history.back();
+}
 
-    centerPlay.addEventListener("click", async () => {
-      try {
-        await player.play();
-      } catch (e) {}
-      showUI();
-      updateCenterButton();
-    });
+// FULLSCREEN
+function full(){
+  video.requestFullscreen();
+}
 
-    player.addEventListener("play", () => {
-      showUI();
-      updateCenterButton();
-    });
+// PULAR (ex: abertura)
+function pular(){
+  video.currentTime += 60; // pula 1 minuto
+}
 
-    player.addEventListener("pause", () => {
-      topbar.classList.remove("hidden");
-      updateCenterButton();
-    });
+// PRÓXIMO EP
+function proximo(){
+  alert("Próximo episódio (vamos implementar depois)");
+}
+</script>
 
-    player.addEventListener("click", () => {
-      if (topbar.classList.contains("hidden")) {
-        topbar.classList.remove("hidden");
-        showUI();
-      } else {
-        topbar.classList.add("hidden");
-      }
-    });
-
-    document.addEventListener("mousemove", showUI);
-    document.addEventListener("touchstart", showUI, { passive: true });
-
-    updateCenterButton();
-    showUI();
-
-    player.play().catch(() => {
-      updateCenterButton();
-    });
-  </script>
 </body>
-  </html>
+</html>
