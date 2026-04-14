@@ -143,7 +143,6 @@
     const params = new URLSearchParams(window.location.search);
     const videoUrl = params.get("video") || "";
     const titleText = params.get("titulo") || "Dragon7";
-    const skip = parseInt(params.get("skip") || "0", 10);
 
     const player = document.getElementById("player");
     const title = document.getElementById("title");
@@ -178,11 +177,7 @@
     }
 
     backBtn.addEventListener("click", () => {
-      if (window.history.length > 1) {
-        window.history.back();
-      } else {
-        location.href = "about:blank";
-      }
+      history.back();
     });
 
     centerPlay.addEventListener("click", async () => {
@@ -191,12 +186,6 @@
       } catch (e) {}
       showUI();
       updateCenterButton();
-    });
-
-    player.addEventListener("loadedmetadata", () => {
-      if (!isNaN(skip) && skip > 0) {
-        player.currentTime = skip;
-      }
     });
 
     player.addEventListener("play", () => {
